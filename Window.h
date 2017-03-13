@@ -7,9 +7,6 @@ typedef struct {
 	int window_w;
 	int window_h;
 	int window_exit;
-	int window_mx;
-	int window_my;
-	int window_mb;
 	int window_keys[512];	// 当前键盘按下状态
 	HWND window_handle;		// 主窗口 HWND
 	HDC window_dc;			// 配套的 HDC
@@ -60,9 +57,6 @@ inline int window_init(window_t* window, int w, int h, const TCHAR *title, WNDPR
 	window->window_w = 0;
 	window->window_h = 0;
 	window->window_exit = 0;
-	window->window_mx = 0;
-	window->window_my = 0;
-	window->window_mb = 0;
 	window->window_handle = NULL;// 主窗口 HWND
 	window->window_dc = NULL;	// 配套的 HDC
 	window->window_hb = NULL;	// DIB

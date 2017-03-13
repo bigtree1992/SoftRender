@@ -254,7 +254,7 @@ inline void transform_apply(const transform_t *ts, vector_t *y, const vector_t *
 	matrix_apply(y, x, &ts->transform);
 }
 
-// 检查齐次坐标同 cvv 的边界用于视锥裁剪
+// 检查齐次坐标同 cvv 的边界用于视锥裁剪 ???
 inline int transform_check_cvv(const vector_t *v) {
 	float w = v->w;
 	int check = 0;
@@ -267,7 +267,7 @@ inline int transform_check_cvv(const vector_t *v) {
 	return check;
 }
 
-// 归一化，得到屏幕坐标
+// 归一化，得到屏幕坐标 将(-1,1)的坐标映射到(0,w),(w,h)
 inline void transform_homogenize(const transform_t *ts, vector_t *y, const vector_t *x) {
 	float rhw = 1.0f / x->w;
 	y->x = (x->x * rhw + 1.0f) * ts->w * 0.5f;
@@ -299,6 +299,7 @@ inline void vertex_rhw_init(vertex_t *v) {
 	v->color.b *= rhw;
 }
 
+//y = (x2 - x1) * t
 inline void vertex_interp(vertex_t *y, const vertex_t *x1, const vertex_t *x2, float t) {
 	vector_interp(&y->pos, &x1->pos, &x2->pos, t);
 	y->tc.u = interp(x1->tc.u, x2->tc.u, t);
@@ -309,6 +310,7 @@ inline void vertex_interp(vertex_t *y, const vertex_t *x1, const vertex_t *x2, f
 	y->rhw = interp(x1->rhw, x2->rhw, t);
 }
 
+//y = (x2 - x1) / t
 inline void vertex_division(vertex_t *y, const vertex_t *x1, const vertex_t *x2, float w) {
 	float inv = 1.0f / w;
 	y->pos.x = (x2->pos.x - x1->pos.x) * inv;
@@ -323,6 +325,7 @@ inline void vertex_division(vertex_t *y, const vertex_t *x1, const vertex_t *x2,
 	y->rhw = (x2->rhw - x1->rhw) * inv;
 }
 
+//y += x
 inline void vertex_add(vertex_t *y, const vertex_t *x) {
 	y->pos.x += x->pos.x;
 	y->pos.y += x->pos.y;
@@ -337,8 +340,10 @@ inline void vertex_add(vertex_t *y, const vertex_t *x) {
 }
 
 // 根据三角形生成 0-2 个梯形，并且返回合法梯形的数量
-inline int trapezoid_init_triangle(trapezoid_t *trap, const vertex_t *p1,
-	const vertex_t *p2, const vertex_t *p3) {
+inline int trapezoid_init_triangle(
+	trapezoid_t *trap, 
+	const vertex_t *p1,const vertex_t *p2, const vertex_t *p3) 
+{
 	const vertex_t *p;
 	float k, x;
 
